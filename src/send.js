@@ -25,6 +25,7 @@ amqp.connect('amqp://localhost', function(error0, connection) {
     setTimeout(function() {
         connection.close();
         console.log("Send.js is Executed");
+        process.exit(0);
     }, 500);
 });
 }

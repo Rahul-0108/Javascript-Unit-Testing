@@ -34,18 +34,24 @@ it("Happy path Test" ,  (done) =>
   const stubClose = sinon.stub();
   const stubAssertQueue = sinon.stub();
   const stubsendToQueue = sinon.stub();
-  const clock = sinon.useFakeTimers();  // does not work
-  const spyLog= sinon.spy(console,"log");
+  const clock = sinon.useFakeTimers();
+  const fakeLog = sinon.fake(); // stub calls real console.log and printing in cmd , it was just taking track of function call
+  const fakeprocessExit = sinon.fake();
+  sinon.replace(console,"log", fakeLog);
+  sinon.replace(process,"exit",fakeprocessExit);
   stubCreateChannel.yields(false,{assertQueue:stubAssertQueue,sendToQueue:stubsendToQueue });
   stub.yields(false, {createChannel:stubCreateChannel,close:stubClose});
   sendMessage();
   clock.tick(500);
   sinon.assert.calledWith(stubsendToQueue,"hello",Buffer.from("Hello World!"));
-  sinon.assert.calledTwice(spyLog);
-  assert.equal(spyLog.args[0][0]," [x] Sent %s" ,"Hello World!");
-  assert.equal(spyLog.args[1][0],"Send.js is Executed");
+  sinon.assert.calledTwice(fakeLog);
+  assert.equal(fakeLog.args[0][0]," [x] Sent %s");
+  assert.equal(fakeLog.args[0][1],"Hello World!");
+  assert.equal(fakeLog.args[1][0],"Send.js is Executed");
+  sinon.assert.calledOnce(fakeprocessExit);
+  assert.equal(fakeprocessExit.args[0][0],0);
   clock.restore();
-  spyLog.restore();
+  sinon.restore();
   stub.restore();
   done();
   });
