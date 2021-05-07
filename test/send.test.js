@@ -1,5 +1,5 @@
 var amqp = require('amqplib/callback_api');
-const sendMessage = require("../src/send.js");
+const sendMessage = require("../src/send");
 const sinon= require("sinon");
 const assert = require("chai").assert;
 
@@ -35,7 +35,7 @@ it("Happy path Test" ,  (done) =>
   const stubAssertQueue = sinon.stub();
   const stubsendToQueue = sinon.stub();
   const clock = sinon.useFakeTimers();
-  const fakeLog = sinon.fake(); // stub calls real console.log and printing in cmd , it was just taking track of function call
+  const fakeLog = sinon.fake(); // stub calls real console.log and printing in cmd , it was just taking track of function calls
   const fakeprocessExit = sinon.fake();
   sinon.replace(console,"log", fakeLog);
   sinon.replace(process,"exit",fakeprocessExit);
